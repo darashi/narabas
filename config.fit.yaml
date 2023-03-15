@@ -1,0 +1,36 @@
+seed_everything: true
+
+model:
+  class_path: narabas.model.Narabas
+
+data:
+  class_path: narabas.datamodule.NarabasDataModule
+  init_args:
+    name: all
+    batch_size: 8
+    num_workers: 4
+
+optimizer:
+  class_path: torch.optim.RAdam
+  init_args:
+    lr: 2e-4
+
+trainer:
+  accelerator: gpu
+  precision: 16
+  val_check_interval: 1000
+  check_val_every_n_epoch: null
+  callbacks:
+    - class_path: pytorch_lightning.callbacks.ModelCheckpoint
+      init_args:
+        monitor: val_loss
+        mode: min
+        save_top_k: 1
+    # - class_path: pytorch_lightning.callbacks.EarlyStopping
+    #   init_args:
+    #     monitor: val_loss
+    #     mode: min
+    #     patience: 5
+    - class_path: pytorch_lightning.callbacks.LearningRateMonitor
+      init_args:
+        logging_interval: step
